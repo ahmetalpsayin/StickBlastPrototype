@@ -8,6 +8,8 @@ public class StickPlacement : MonoBehaviour
     public GameObject stickPrefab;  // Çubuk prefab'ý
 
     private Camera cam;
+    private GameObject currentStick;
+    private bool isDragging = false;
 
     void Start()
     {
@@ -16,22 +18,34 @@ public class StickPlacement : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))  // Fare týklanýnca veya mobilde dokunulunca
+        if (Input.GetMouseButtonDown(0)) // Fare basýlýnca
         {
             Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-            Vector2Int gridPos = WorldToGrid(mousePos);
+            currentStick = Instantiate(stickPrefab, mousePos, Quaternion.identity);
+            isDragging = true;
+        }
 
-            if (gridManager.PlaceStick(gridPos))
+        if (isDragging && currentStick != null)
+        {
+            Vector2 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+            currentStick.transform.position = mousePos;
+        }
+
+        if (Input.GetMouseButtonUp(0) && isDragging) // Fare býrakýlýnca
+        {
+            Vector3 snappedPosition = gridManager.GetNearestGridPosition(currentStick.transform.position);
+            if (gridManager.PlaceStick(currentStick, snappedPosition))
             {
-                Instantiate(stickPrefab, new Vector3(gridPos.x, gridPos.y, 0), Quaternion.identity);
+                currentStick.transform.position = snappedPosition;
+            }
+            else
+            {
+                Destroy(currentStick); // Geçerli bir yere koyulmazsa sil
             }
 
+            isDragging = false;
             gridManager.CheckForCompleteRowOrColumn();
         }
     }
-
-    private Vector2Int WorldToGrid(Vector2 worldPosition)
-    {
-        return new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.y));
-    }
 }
+

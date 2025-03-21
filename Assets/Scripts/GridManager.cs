@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine; 
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
@@ -30,11 +32,14 @@ public class GridManager : MonoBehaviour
     }
 
     // Hücreye çubuk yerleþtir
-    public bool PlaceStick(Vector2Int position)
+    public bool PlaceStick(GameObject stick, Vector3 worldPosition)
     {
-        if (IsCellEmpty(position.x, position.y))
+        Vector2Int gridPos = WorldToGridPosition(worldPosition);
+
+        if (IsCellEmpty(gridPos.x, gridPos.y))
         {
-            grid[position.x, position.y].isFilled = true;
+            grid[gridPos.x, gridPos.y].isFilled = true;
+            stick.transform.position = GridToWorldPosition(gridPos); // Stick'i grid'e hizala
             return true;
         }
         return false;
@@ -107,6 +112,27 @@ public class GridManager : MonoBehaviour
             grid[column, y].isFilled = false;
         }
     }
+
+    // Dünya pozisyonunu grid koordinatýna çevirir
+    public Vector2Int WorldToGridPosition(Vector3 worldPosition)
+    {
+        int x = Mathf.RoundToInt(worldPosition.x / cellSize);
+        int y = Mathf.RoundToInt(worldPosition.y / cellSize);
+        return new Vector2Int(x, y);
+    }
+
+    // Grid koordinatýný dünya pozisyonuna çevirir
+    public Vector3 GridToWorldPosition(Vector2Int gridPosition)
+    {
+        return new Vector3(gridPosition.x * cellSize, gridPosition.y * cellSize, 0);
+    }
+
+    // En yakýn grid pozisyonunu döndürür
+    public Vector3 GetNearestGridPosition(Vector3 worldPosition)
+    {
+        Vector2Int gridPos = WorldToGridPosition(worldPosition);
+        return GridToWorldPosition(gridPos);
+    }
 }
 
 // Grid içindeki hücrelerin durumunu tutan sýnýf
@@ -114,4 +140,3 @@ public class GridCell
 {
     public bool isFilled = false; // Hücre dolu mu?
 }
-
