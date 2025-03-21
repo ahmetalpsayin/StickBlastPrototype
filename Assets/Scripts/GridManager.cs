@@ -32,10 +32,52 @@ public class GridManager : MonoBehaviour
     }
 
     // Hücreye çubuk yerleþtir
-    public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
+    /*
+   public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
+{
+    Stick stick = stickObj.GetComponent<Stick>();
+    if (stick == null) return false;
+
+    Vector2Int centerGridPos = WorldToGridPosition(worldPosition);
+    Debug.Log($"[GridManager] Trying to place stick at {centerGridPos}");
+
+    List<Vector2Int> targetPositions = new List<Vector2Int>();
+
+    // 1. Önce tüm hücreleri kontrol et
+    foreach (Vector2Int offset in stick.occupiedOffsets)
+    {
+        Vector2Int targetPos = centerGridPos + offset;
+        if (!IsWithinBounds(targetPos))
+        {
+            Debug.Log($"[GridManager] Target position {targetPos} out of bounds");
+            return false;
+        }
+
+        if (!IsCellEmpty(targetPos.x, targetPos.y))
+        {
+            Debug.Log($"[GridManager] Target position {targetPos} is already filled");
+            return false;
+        }
+
+        targetPositions.Add(targetPos);
+    }
+
+    // 2. Tüm kontroller geçti, þimdi hücreleri doldur
+    foreach (Vector2Int pos in targetPositions)
+    {
+        grid[pos.x, pos.y].isFilled = true;
+        Debug.Log($"[GridManager] Filling cell {pos}");
+    }
+
+    return true;
+}
+    */
+
+   public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
     {
         Stick stick = stickObj.GetComponent<Stick>();
-        if (stick == null) return false;
+        if (stick == null) 
+            return false;
 
         Vector2Int centerGridPos = WorldToGridPosition(worldPosition);
         Debug.Log($"[GridManager] Trying to place stick at {centerGridPos}");
@@ -58,6 +100,7 @@ public class GridManager : MonoBehaviour
                 return false;
             }
 
+            Debug.Log($"[GridManager] Target position {targetPos} is added");
             targetPositions.Add(targetPos);
         }
 

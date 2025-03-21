@@ -27,11 +27,10 @@ public class StickPlacement : MonoBehaviour
             {
                 Stick stickScript = hit.GetComponent<Stick>();
 
-                //  Bu çubuk zaten yerleştirildiyse, seçilmesine izin verme
                 if (stickScript != null && stickScript.isPlaced)
                 {
-                    Debug.LogWarning("[StickPlacement] This stick is already placed. Can't select.");
-                    return;
+                    Debug.Log("[StickPlacement] Bu çubuk zaten yerleştirilmiş, tekrar seçilemez.");
+                    return; //   seçilmesine izin verme
                 }
 
                 selectedStick = hit.gameObject;
@@ -53,7 +52,7 @@ public class StickPlacement : MonoBehaviour
             //  Eğer bu çubuk zaten yerleştirildiyse tekrar bırakılmasın
             if (stickScript != null && stickScript.isPlaced)
             {
-                Debug.LogWarning("[StickPlacement] Bu çubuk zaten yerleştirilmiş!");
+                Debug.Log("[StickPlacement] Zaten yerleştirilmiş çubuğu tekrar bırakmak istedin.");
                 selectedStick = null;
                 return;
             }
@@ -63,10 +62,14 @@ public class StickPlacement : MonoBehaviour
 
             if (success)
             {
-                Debug.Log("çubukları yerleştirmede sen bir harikasın1");
+                Debug.Log("çubukları yerleştirmede sen bir harikasın!");
                 selectedStick.transform.position = snapped;
                 stickScript.isPlaced = true; //  Yerleştirildiğini burada işaretle
-                stickSpawner.OnStickPlaced(selectedStick);
+                stickSpawner.OnStickPlaced(selectedStick); 
+
+                // BONUS: Tekrar seçilemesin diye collider'ı kapat
+                selectedStick.GetComponent<Collider2D>().enabled = false;
+                selectedStick.tag = "Untagged";
             }
             else
             {
