@@ -1,49 +1,61 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
- 
-public class Stick : MonoBehaviour
+using UnityEngine; 
+
+
+public class Stick : MonoBehaviour, IInputReceiver
 {
     public bool isPlaced = false;
     public string shapeType;
     public Vector2Int[] occupiedOffsets;
+    public Vector3 startPosition;
 
-    [HideInInspector] public Vector3 startPosition;
+    private Vector3 offset;
+    private Camera cam;
+    public GridManager gridManager;
+    public StickSpawner stickSpawner;
 
-    // Otomatik ofset tanýmlama (tercihe baðlý)
-    void Awake()
+    private void Start()
     {
-        if (occupiedOffsets == null || occupiedOffsets.Length == 0)
-        {
-            switch (shapeType)
-            {
-                case "I":
-                    occupiedOffsets = new Vector2Int[] {
-                        new Vector2Int(0, 0),
-                        new Vector2Int(0, 1)
-                    };
-                    break;
-                case "L":
-                    occupiedOffsets = new Vector2Int[] {
-                        new Vector2Int(0, 0),
-                        new Vector2Int(0, 1),
-                        new Vector2Int(1, 0)
-                    };
-                    break;
-                case "U":
-                    occupiedOffsets = new Vector2Int[] {
-                        new Vector2Int(0, 0),
-                        new Vector2Int(1, 0),
-                        new Vector2Int(2, 0),
-                        new Vector2Int(1, 1)
-                    };
-                    break;
-            }
-        }
-
-        // Doðduðu konumu kaydet
         startPosition = transform.position;
+        cam = Camera.main;
+        gridManager = FindObjectOfType<GridManager>();
+        stickSpawner = FindObjectOfType<StickSpawner>();
+    }
+
+    public void OnInputDown(Vector2 worldPos)
+    {
+        if (isPlaced) return;
+        offset = transform.position - (Vector3)worldPos;
+    }
+
+    public void OnInputDrag(Vector2 worldPos)
+    {
+        if (isPlaced) return;
+        transform.position = worldPos + (Vector2)offset;
+    }
+
+    public void OnInputUp(Vector2 worldPos)
+    {
+        if (isPlaced) return;
+
+        Vector3 snapped = gridManager.GetNearestGridPosition(transform.position);
+        bool success = gridManager.PlaceStick(gameObject, snapped);
+
+        if (success)
+        {
+            transform.position = snapped;
+            isPlaced = true;
+            GetComponent<Collider2D>().enabled = false;
+            tag = "Untagged";
+            stickSpawner.OnStickPlaced(gameObject);
+        }
+        else
+        {
+            transform.position = startPosition;
+        }
     }
 }
+
 
 

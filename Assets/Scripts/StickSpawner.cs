@@ -1,6 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Generic;
+using System.Collections.Generic; 
 using UnityEngine;
 
 public class StickSpawner : MonoBehaviour
@@ -8,6 +7,8 @@ public class StickSpawner : MonoBehaviour
     public GameObject iStickPrefab;
     public GameObject lStickPrefab;
     public GameObject uStickPrefab;
+
+    public GridManager gridManager; // örnek
 
     public Transform selectionAreaParent; // Alt paneldeki çubuklarýn görüneceði yer
     public Vector2[] spawnPositions; // 3 çubuðun ekran üzerindeki pozisyonlarý
@@ -29,6 +30,16 @@ public class StickSpawner : MonoBehaviour
         {
             GameObject newStick = Instantiate(shapes[i], spawnPositions[i], Quaternion.identity, selectionAreaParent);
             newStick.GetComponent<Stick>().isPlaced = false;
+            
+
+            Stick stickScript = newStick.GetComponent<Stick>();
+            if (stickScript != null)
+            {
+                stickScript.isPlaced = false;
+                stickScript.gridManager = this.gridManager; 
+                stickScript.stickSpawner = this;
+            }
+
             currentSticks.Add(newStick);
         }
     }

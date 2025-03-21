@@ -131,8 +131,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169496743}
-  - component: {fileID: 169496742}
   - component: {fileID: 169496744}
+  - component: {fileID: 169496745}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -140,19 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &169496742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 169496741}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f419d77cbff78f43ac1fa4171e4f8ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridManager: {fileID: 1398649819}
 --- !u!4 &169496743
 Transform:
   m_ObjectHideFlags: 0
@@ -184,6 +171,18 @@ MonoBehaviour:
   gridHeight: 10
   extraVerticalSpace: 4
   minOrthoSize: 6
+--- !u!114 &169496745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169496741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f419d77cbff78f43ac1fa4171e4f8ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -420,7 +419,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347074424}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2bfdcebef23b0f49bfc7c6eb23addb9, type: 3}
   m_Name: 
@@ -788,6 +787,7 @@ MonoBehaviour:
   iStickPrefab: {fileID: 1373257871647158785, guid: 359014e3823d9ab4ea8e5541fb839781, type: 3}
   lStickPrefab: {fileID: 1373257871647158785, guid: 359014e3823d9ab4ea8e5541fb839781, type: 3}
   uStickPrefab: {fileID: 1373257871647158785, guid: 359014e3823d9ab4ea8e5541fb839781, type: 3}
+  gridManager: {fileID: 1398649819}
   selectionAreaParent: {fileID: 1530665874}
   spawnPositions:
   - {x: 2, y: -2}
