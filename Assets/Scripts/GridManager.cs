@@ -32,17 +32,56 @@ public class GridManager : MonoBehaviour
     }
 
     // Hücreye çubuk yerleþtir
-    public bool PlaceStick(GameObject stick, Vector3 worldPosition)
+    public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
     {
-        Vector2Int gridPos = WorldToGridPosition(worldPosition);
+        Stick stick = stickObj.GetComponent<Stick>();
+        if (stick == null) return false;
 
-        if (IsCellEmpty(gridPos.x, gridPos.y))
+        Vector2Int centerGridPos = WorldToGridPosition(worldPosition);
+        Debug.Log($"[GridManager] Trying to place stick at {centerGridPos}");
+
+        List<Vector2Int> targetPositions = new List<Vector2Int>();
+
+        // 1. Önce tüm hücreleri kontrol et
+        foreach (Vector2Int offset in stick.occupiedOffsets)
         {
-            grid[gridPos.x, gridPos.y].isFilled = true;
-            stick.transform.position = GridToWorldPosition(gridPos); // Stick'i grid'e hizala
-            return true;
+            Vector2Int targetPos = centerGridPos + offset;
+            if (!IsWithinBounds(targetPos))
+            {
+                Debug.Log($"[GridManager] Target position {targetPos} out of bounds");
+                return false;
+            }
+
+            if (!IsCellEmpty(targetPos.x, targetPos.y))
+            {
+                Debug.Log($"[GridManager] Target position {targetPos} is already filled");
+                return false;
+            }
+
+            targetPositions.Add(targetPos);
         }
-        return false;
+
+        // 2. Tüm kontroller geçti, þimdi hücreleri doldur
+        foreach (Vector2Int pos in targetPositions)
+        {
+            grid[pos.x, pos.y].isFilled = true;
+            Debug.Log($"[GridManager] Filling cell {pos}");
+        }
+
+        return true;
+    }
+
+
+    public Vector2Int WorldToGridPosition(Vector3 worldPosition)
+    {
+        int x = Mathf.FloorToInt(worldPosition.x);
+        int y = Mathf.FloorToInt(worldPosition.y);
+        return new Vector2Int(x, y);
+    }
+
+    private bool IsWithinBounds(Vector2Int pos)
+    {
+        return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
     }
 
     // Hücre dolu mu kontrol et
@@ -113,13 +152,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    // Dünya pozisyonunu grid koordinatýna çevirir
-    public Vector2Int WorldToGridPosition(Vector3 worldPosition)
-    {
-        int x = Mathf.RoundToInt(worldPosition.x / cellSize);
-        int y = Mathf.RoundToInt(worldPosition.y / cellSize);
-        return new Vector2Int(x, y);
-    }
+     
 
     // Grid koordinatýný dünya pozisyonuna çevirir
     public Vector3 GridToWorldPosition(Vector2Int gridPosition)
