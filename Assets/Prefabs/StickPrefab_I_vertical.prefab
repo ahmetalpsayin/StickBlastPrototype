@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 9075699361119015885}
   - component: {fileID: 4503752059450572489}
   - component: {fileID: 4362775593538551406}
-  - component: {fileID: 3887909009122187940}
+  - component: {fileID: -3915358191366126659}
   m_Layer: 0
-  m_Name: StickPrefab_I
+  m_Name: StickPrefab_I_vertical
   m_TagString: Stick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.62, y: 3.23}
   m_EdgeRadius: 0
---- !u!114 &3887909009122187940
+--- !u!114 &-3915358191366126659
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,12 +140,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1373257871647158785}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22509b47cd05cf94da8a542cf6d4b3b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2b1f0fa400f85044a905f04aae64bad7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlaced: 0
-  shapeType: 
   occupiedOffsets:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
-  startPosition: {x: 0, y: 0, z: 0}
+  - {x: 1, y: 0}

@@ -1,216 +1,107 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic; 
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
-    public int width = 10;  // Izgara geniþliði
-    public int height = 10; // Izgara yüksekliði
-    public float cellSize = 1f; // Hücre boyutu
+    public int nodeGridWidth = 6;   // 6x6 grid Ã¶rneÄŸi
+    public int nodeGridHeight = 6;
 
-    private GridCell[,] grid; // Grid verisini tutacak dizi
+    private Node[,] nodes;
+    private Dictionary<Edge, bool> occupiedEdges = new Dictionary<Edge, bool>();
 
     void Start()
     {
-        InitializeGrid();
+        InitializeNodesAndEdges();
+         
     }
 
-    // Izgarayý baþlat
-    private void InitializeGrid()
+    private void InitializeNodesAndEdges()
     {
-        grid = new GridCell[width, height];
+        nodes = new Node[nodeGridWidth, nodeGridHeight];
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < nodeGridWidth; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < nodeGridHeight; y++)
             {
-                grid[x, y] = new GridCell();
-            }
-        }
-    }
-
-    // Hücreye çubuk yerleþtir
-    /*
-   public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
-{
-    Stick stick = stickObj.GetComponent<Stick>();
-    if (stick == null) return false;
-
-    Vector2Int centerGridPos = WorldToGridPosition(worldPosition);
-    Debug.Log($"[GridManager] Trying to place stick at {centerGridPos}");
-
-    List<Vector2Int> targetPositions = new List<Vector2Int>();
-
-    // 1. Önce tüm hücreleri kontrol et
-    foreach (Vector2Int offset in stick.occupiedOffsets)
-    {
-        Vector2Int targetPos = centerGridPos + offset;
-        if (!IsWithinBounds(targetPos))
-        {
-            Debug.Log($"[GridManager] Target position {targetPos} out of bounds");
-            return false;
-        }
-
-        if (!IsCellEmpty(targetPos.x, targetPos.y))
-        {
-            Debug.Log($"[GridManager] Target position {targetPos} is already filled");
-            return false;
-        }
-
-        targetPositions.Add(targetPos);
-    }
-
-    // 2. Tüm kontroller geçti, þimdi hücreleri doldur
-    foreach (Vector2Int pos in targetPositions)
-    {
-        grid[pos.x, pos.y].isFilled = true;
-        Debug.Log($"[GridManager] Filling cell {pos}");
-    }
-
-    return true;
-}
-    */
-
-   public bool PlaceStick(GameObject stickObj, Vector3 worldPosition)
-    {
-        Stick stick = stickObj.GetComponent<Stick>();
-        if (stick == null) 
-            return false;
-
-        Vector2Int centerGridPos = WorldToGridPosition(worldPosition);
-        Debug.Log($"[GridManager] Trying to place stick at {centerGridPos}");
-
-        List<Vector2Int> targetPositions = new List<Vector2Int>();
-
-        // 1. Önce tüm hücreleri kontrol et
-        foreach (Vector2Int offset in stick.occupiedOffsets)
-        {
-            Vector2Int targetPos = centerGridPos + offset;
-            if (!IsWithinBounds(targetPos))
-            {
-                Debug.Log($"[GridManager] Target position {targetPos} out of bounds");
-                return false;
-            }
-
-            if (!IsCellEmpty(targetPos.x, targetPos.y))
-            {
-                Debug.Log($"[GridManager] Target position {targetPos} is already filled");
-                return false;
-            }
-
-            Debug.Log($"[GridManager] Target position {targetPos} is added");
-            targetPositions.Add(targetPos);
-        }
-
-        // 2. Tüm kontroller geçti, þimdi hücreleri doldur
-        foreach (Vector2Int pos in targetPositions)
-        {
-            grid[pos.x, pos.y].isFilled = true;
-            Debug.Log($"[GridManager] Filling cell {pos}");
-        }
-
-        return true;
-    }
-
-
-    public Vector2Int WorldToGridPosition(Vector3 worldPosition)
-    {
-        int x = Mathf.FloorToInt(worldPosition.x);
-        int y = Mathf.FloorToInt(worldPosition.y);
-        return new Vector2Int(x, y);
-    }
-
-    private bool IsWithinBounds(Vector2Int pos)
-    {
-        return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
-    }
-
-    // Hücre dolu mu kontrol et
-    public bool IsCellEmpty(int x, int y)
-    {
-        if (x < 0 || x >= width || y < 0 || y >= height) return false;
-        return !grid[x, y].isFilled;
-    }
-
-    // Satýr/Sütun tamamlanmýþ mý kontrol et
-    public bool CheckForCompleteRowOrColumn()
-    {
-        for (int y = 0; y < height; y++)
-        {
-            if (IsRowComplete(y))
-            {
-                ClearRow(y);
-                return true;
+                nodes[x, y] = new Node(new Vector2Int(x, y));
             }
         }
 
-        for (int x = 0; x < width; x++)
+        // TÃ¼m olasÄ± yatay ve dikey kenarlarÄ± oluÅŸtur
+        for (int x = 0; x < nodeGridWidth; x++)
         {
-            if (IsColumnComplete(x))
+            for (int y = 0; y < nodeGridHeight; y++)
             {
-                ClearColumn(x);
-                return true;
+                if (x < nodeGridWidth - 1)
+                    occupiedEdges[new Edge(nodes[x, y], nodes[x + 1, y])] = false;
+
+                if (y < nodeGridHeight - 1)
+                    occupiedEdges[new Edge(nodes[x, y], nodes[x, y + 1])] = false;
             }
         }
-        return false;
     }
-
-    // Satýr tamamlandý mý?
-    private bool IsRowComplete(int row)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            if (!grid[x, row].isFilled) return false;
-        }
-        return true;
-    }
-
-    // Sütun tamamlandý mý?
-    private bool IsColumnComplete(int column)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            if (!grid[column, y].isFilled) return false;
-        }
-        return true;
-    }
-
-    // Satýrý temizle
-    private void ClearRow(int row)
-    {
-        for (int x = 0; x < width; x++)
-        {
-            grid[x, row].isFilled = false;
-        }
-    }
-
-    // Sütunu temizle
-    private void ClearColumn(int column)
-    {
-        for (int y = 0; y < height; y++)
-        {
-            grid[column, y].isFilled = false;
-        }
-    }
-
      
 
-    // Grid koordinatýný dünya pozisyonuna çevirir
-    public Vector3 GridToWorldPosition(Vector2Int gridPosition)
+    // 1. En yakÄ±n node'u bulur
+    public Vector2Int GetClosestNode(Vector2 worldPosition)
     {
-        return new Vector3(gridPosition.x * cellSize, gridPosition.y * cellSize, 0);
+        Vector2Int closest = Vector2Int.zero;
+        float minDistance = float.MaxValue;
+
+        for (int x = 0; x < nodeGridWidth; x++)
+        {
+            for (int y = 0; y < nodeGridHeight; y++)
+            {
+                Vector2 nodeWorld = new Vector2(x, y);
+                float dist = Vector2.Distance(worldPosition, nodeWorld);
+
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    closest = new Vector2Int(x, y);
+                }
+            }
+        }
+
+        return closest;
     }
 
-    // En yakýn grid pozisyonunu döndürür
-    public Vector3 GetNearestGridPosition(Vector3 worldPosition)
+    private bool IsValidNode(Vector2Int pos)
     {
-        Vector2Int gridPos = WorldToGridPosition(worldPosition);
-        return GridToWorldPosition(gridPos);
+        return pos.x >= 0 && pos.x < nodeGridWidth && pos.y >= 0 && pos.y < nodeGridHeight;
     }
-}
 
-// Grid içindeki hücrelerin durumunu tutan sýnýf
-public class GridCell
-{
-    public bool isFilled = false; // Hücre dolu mu?
+    // 2. Offsetâ€™li stickâ€™i yerleÅŸtirir
+    public bool TryPlaceStickWithOffsets(Vector2Int baseNode, Vector2Int[] offsets)
+    {
+        List<Edge> edgesToOccupy = new List<Edge>();
+
+        for (int i = 0; i < offsets.Length - 1; i++)
+        {
+            Vector2Int from = baseNode + offsets[i];
+            Vector2Int to = baseNode + offsets[i + 1];
+
+            Edge edge = new Edge(new Node(from), new Node(to));
+
+            if (occupiedEdges.ContainsKey(edge) && !occupiedEdges[edge])
+            {
+                edgesToOccupy.Add(edge);
+            }
+            else
+            {
+                Debug.Log($"Edge between {from} and {to} is already occupied or invalid");
+                return false;
+            }
+        }
+
+        foreach (Edge e in edgesToOccupy)
+        {
+            occupiedEdges[e] = true;
+            Debug.Log($"âœ… Filled edge between {e.nodeA.position} and {e.nodeB.position}");
+        }
+
+        return true;
+    }
+
 }
