@@ -466,6 +466,7 @@ MonoBehaviour:
   nodePrefab: {fileID: 3601620002602554649, guid: b040bea93bce4e14ab4b641dbccc6495, type: 3}
   edgePrefab: {fileID: 522375501933395960, guid: d61b1c5d5cadfd74ea2f578a4e0cfd54, type: 3}
   gridManager: {fileID: 1398649819}
+  nodeSpacing: 4
 --- !u!4 &1126677988
 Transform:
   m_ObjectHideFlags: 0
@@ -512,6 +513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeGridWidth: 6
   nodeGridHeight: 6
+  spacing: 3
 --- !u!4 &1398649820
 Transform:
   m_ObjectHideFlags: 0

@@ -10,6 +10,9 @@ public class GridManager : MonoBehaviour
     private Node[,] nodes;
     private Dictionary<Edge, bool> occupiedEdges = new Dictionary<Edge, bool>();
 
+    [SerializeField]
+    public float spacing = 1.5f;
+
     void Start()
     {
         InitializeNodesAndEdges();
