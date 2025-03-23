@@ -17,15 +17,16 @@ public class GridVisualizer : MonoBehaviour
         DrawNodes();
         DrawEdges();
     }
-     
+
     void DrawNodes()
     {
         for (int x = 0; x < gridManager.nodeGridWidth; x++)
         {
             for (int y = 0; y < gridManager.nodeGridHeight; y++)
             {
-                Vector3 pos = new Vector3(x * nodeSpacing, y * nodeSpacing, 0);
-                Instantiate(nodePrefab, pos, Quaternion.identity, transform);
+                Vector2Int gridPos = new Vector2Int(x, y);
+                Vector3 worldPos = gridManager.GridToWorldPosition(gridPos);
+                Instantiate(nodePrefab, worldPos, Quaternion.identity, transform);
             }
         }
     }
@@ -36,22 +37,30 @@ public class GridVisualizer : MonoBehaviour
         {
             for (int y = 0; y < gridManager.nodeGridHeight; y++)
             {
-                Vector3 current = new Vector3(x * nodeSpacing, y * nodeSpacing, 0);
+                Vector2Int current = new Vector2Int(x, y);
+                Vector3 worldCurrent = gridManager.GridToWorldPosition(current);
+
                 // Yatay edge
                 if (x < gridManager.nodeGridWidth - 1)
                 {
-                    Vector3 right = new Vector3((x + 1) * nodeSpacing, y * nodeSpacing, 0);
-                    CreateEdgeBetween(current, right);
+                    Vector2Int right = new Vector2Int(x + 1, y);
+                    Vector3 worldRight = gridManager.GridToWorldPosition(right);
+
+                    CreateEdgeBetween(worldCurrent, worldRight);
                 }
+
                 // Dikey edge
                 if (y < gridManager.nodeGridHeight - 1)
                 {
-                    Vector3 top = new Vector3(x * nodeSpacing, (y + 1) * nodeSpacing, 0);
-                    CreateEdgeBetween(current, top);
+                    Vector2Int top = new Vector2Int(x, y + 1);
+                    Vector3 worldTop = gridManager.GridToWorldPosition(top);
+
+                    CreateEdgeBetween(worldCurrent, worldTop);
                 }
             }
         }
     }
+
 
     void CreateEdgeBetween(Vector3 a, Vector3 b)
     {

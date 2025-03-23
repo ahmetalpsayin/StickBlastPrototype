@@ -109,5 +109,9 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-     
+    public Vector3 GridToWorldPosition(Vector2Int gridPos)
+    {
+        return new Vector3(gridPos.x * spacing, gridPos.y * spacing, 0f);
+    }
+
 }

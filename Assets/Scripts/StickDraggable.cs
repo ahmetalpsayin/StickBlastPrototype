@@ -48,7 +48,8 @@ public class StickDraggable : MonoBehaviour
             for (int i = 0; i < occupiedOffsets.Length; i++)
             {
                 Vector2Int nodePos = baseNode + occupiedOffsets[i];
-                Instantiate(whiteNodePrefab, new Vector3(nodePos.x * gm.spacing, nodePos.y * gm.spacing, 0), Quaternion.identity);
+                Vector3 worldPos = gm.GridToWorldPosition(nodePos);
+                Instantiate(whiteNodePrefab, worldPos, Quaternion.identity);
             }
 
             for (int i = 0; i < occupiedOffsets.Length - 1; i++)
@@ -56,8 +57,8 @@ public class StickDraggable : MonoBehaviour
                 Vector2Int from = baseNode + occupiedOffsets[i];
                 Vector2Int to = baseNode + occupiedOffsets[i + 1];
 
-                Vector3 posA = new Vector3(from.x * gm.spacing, from.y * gm.spacing, 0);
-                Vector3 posB = new Vector3(to.x * gm.spacing, to.y * gm.spacing, 0);
+                Vector3 posA = gm.GridToWorldPosition(from);
+                Vector3 posB = gm.GridToWorldPosition(to);
                 Vector3 midPoint = (posA + posB) / 2f;
                 Vector3 dir = posB - posA;
                 float length = dir.magnitude;
