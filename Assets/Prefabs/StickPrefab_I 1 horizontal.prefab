@@ -96,6 +96,8 @@ MonoBehaviour:
   - {x: 1, y: 0}
   whiteNodePrefab: {fileID: 8750174632311977112, guid: 2023fababdd234443a57b4e02211a13e, type: 3}
   whiteEdgePrefab: {fileID: 522375501933395960, guid: f62c7bb9a8deb5845b2247e8cd89fb80, type: 3}
+  highlightNodePrefab: {fileID: 4261726030781492566, guid: b96c083734cf16a41904f9b2284715bd, type: 3}
+  highlightEdgePrefab: {fileID: 4018837201856163877, guid: a2ef5b0ac896f224690165c1782f2411, type: 3}
 --- !u!1 &3632536790802336645
 GameObject:
   m_ObjectHideFlags: 0

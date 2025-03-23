@@ -114,4 +114,24 @@ public class GridManager : MonoBehaviour
         return new Vector3(gridPos.x * spacing, gridPos.y * spacing, 0f);
     }
 
+    public bool CanPlaceStickBetween(Vector2Int fromPos, Vector2Int toPos)
+    {
+        if (!IsValidNode(fromPos) || !IsValidNode(toPos))
+            return false;
+
+        Vector2Int diff = toPos - fromPos;
+        if (Mathf.Abs(diff.x) + Mathf.Abs(diff.y) != 1)
+            return false; // Sadece yatay/dikey komşu olabilir
+
+        Edge edgeToCheck = new Edge(new Node(fromPos), new Node(toPos));
+
+        if (occupiedEdges.TryGetValue(edgeToCheck, out bool isOccupied))
+        {
+            return !isOccupied;
+        }
+
+        return false; // Böyle bir edge yoksa geçersizdir
+    }
+
+
 }
