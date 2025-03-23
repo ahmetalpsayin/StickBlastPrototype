@@ -45,7 +45,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-     
+
 
     // 1. En yakın node'u bulur
     public Vector2Int GetClosestNode(Vector2 worldPosition)
@@ -57,7 +57,8 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < nodeGridHeight; y++)
             {
-                Vector2 nodeWorld = new Vector2(x, y);
+                // 🔧 Node'ların world pozisyonunu spacing'e göre hesapla
+                Vector2 nodeWorld = new Vector2(x * spacing, y * spacing);
                 float dist = Vector2.Distance(worldPosition, nodeWorld);
 
                 if (dist < minDistance)
@@ -108,27 +109,5 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    // Arka plan tile'larını GridManager boyutuna göre doldurur
-    public class TilemapBackgroundFiller : MonoBehaviour
-    {
-        public Tilemap tilemap;
-        public TileBase tile;
-        public GridManager gridManager;
-
-        public float spacing = 4f;
-
-        void Start()
-        {
-            for (int x = 0; x < gridManager.nodeGridWidth; x++)
-            {
-                for (int y = 0; y < gridManager.nodeGridHeight; y++)
-                {
-                    Vector3Int pos = new Vector3Int(x, y, 0);
-                    tilemap.SetTile(pos, tile);
-                }
-            }
-
-            tilemap.transform.localScale = Vector3.one * spacing;
-        }
-    }
+     
 }
