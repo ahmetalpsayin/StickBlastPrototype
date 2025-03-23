@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic; 
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
@@ -107,4 +108,27 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
+    // Arka plan tile'larını GridManager boyutuna göre doldurur
+    public class TilemapBackgroundFiller : MonoBehaviour
+    {
+        public Tilemap tilemap;
+        public TileBase tile;
+        public GridManager gridManager;
+
+        public float spacing = 4f;
+
+        void Start()
+        {
+            for (int x = 0; x < gridManager.nodeGridWidth; x++)
+            {
+                for (int y = 0; y < gridManager.nodeGridHeight; y++)
+                {
+                    Vector3Int pos = new Vector3Int(x, y, 0);
+                    tilemap.SetTile(pos, tile);
+                }
+            }
+
+            tilemap.transform.localScale = Vector3.one * spacing;
+        }
+    }
 }
