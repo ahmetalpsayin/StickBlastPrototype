@@ -296,9 +296,9 @@ MonoBehaviour:
   uStickPrefab: {fileID: 8741166110320874875, guid: 86b83696791f8654680ad47646a1d0c6, type: 3}
   selectionArea: {fileID: 1530665874}
   spawnPositions:
-  - {x: -6, y: -3, z: 0}
   - {x: 0, y: -3, z: 0}
-  - {x: 6, y: -3, z: 0}
+  - {x: 4, y: -3, z: 0}
+  - {x: 8, y: -3, z: 0}
 --- !u!4 &622276950
 Transform:
   m_ObjectHideFlags: 0
