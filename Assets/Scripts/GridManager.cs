@@ -104,7 +104,7 @@ public class GridManager : MonoBehaviour
         foreach (Edge e in edgesToOccupy)
         {
             occupiedEdges[e] = true;
-            Debug.Log($"✅ Filled edge between {e.nodeA.position} and {e.nodeB.position}");
+            Debug.Log($" Filled edge between {e.nodeA.position} and {e.nodeB.position}");
         }
 
         return true;
