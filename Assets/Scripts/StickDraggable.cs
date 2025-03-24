@@ -16,7 +16,7 @@ public class StickDraggable : MonoBehaviour
     public GameObject highlightNodePrefab;
     public GameObject highlightEdgePrefab;
 
-    private GameObject currentEdgeHighlight;
+    private List<GameObject> currentEdgeHighlights = new List<GameObject>();
     private List<GameObject> currentNodeHighlights = new List<GameObject>();
 
     private Vector2Int? lastHighlightedFrom = null; 
@@ -125,7 +125,9 @@ public class StickDraggable : MonoBehaviour
 
     void ShowHighlightForOffsets(Vector2Int baseNode, Color stickColor)
     {
-        // Edge highlight
+        ClearHighlight(); // Önceki highlight'ları temizle
+
+        // 🔷 Edge highlight
         for (int i = 0; i < occupiedOffsets.Length - 1; i++)
         {
             Vector2Int from = baseNode + occupiedOffsets[i];
@@ -134,22 +136,21 @@ public class StickDraggable : MonoBehaviour
             Vector3 worldA = gridManager.GridToWorldPosition(from);
             Vector3 worldB = gridManager.GridToWorldPosition(to);
             Vector3 mid = (worldA + worldB) / 2f;
-            Vector3 dir = worldB - worldA;
-            float length = dir.magnitude;
+            float length = (worldB - worldA).magnitude;
 
             GameObject edge = Instantiate(highlightEdgePrefab, mid, Quaternion.identity);
 
-            // Yön ve scale
-            if (Mathf.Abs(from.x - to.x) == 1)
+            // Yön & scale
+            if (Mathf.Abs(from.x - to.x) == 1) // yatay
                 edge.transform.localScale = new Vector3(length, 0.2f, 1f);
-            else
+            else // dikey
                 edge.transform.localScale = new Vector3(0.2f, length, 1f);
 
             edge.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
-            currentEdgeHighlight = edge;
+            currentEdgeHighlights.Add(edge); // 🔄 Listeye ekle
         }
 
-        // Node highlight
+        // 🔶 Node highlight
         foreach (Vector2Int offset in occupiedOffsets)
         {
             Vector2Int nodePos = baseNode + offset;
@@ -157,26 +158,25 @@ public class StickDraggable : MonoBehaviour
 
             GameObject node = Instantiate(highlightNodePrefab, worldPos, Quaternion.identity);
             node.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
-            currentNodeHighlights.Add(node);
+            currentNodeHighlights.Add(node); // 🔄 Listeye ekle
         }
 
         lastHighlightedFrom = baseNode;
     }
 
-     
+
 
     void ClearHighlight()
     {
-        if (currentEdgeHighlight != null)
-            Destroy(currentEdgeHighlight);
+        foreach (var edge in currentEdgeHighlights)
+            Destroy(edge);
+        currentEdgeHighlights.Clear();
 
         foreach (var node in currentNodeHighlights)
-        {
             Destroy(node);
-        }
-
         currentNodeHighlights.Clear();
-        lastHighlightedFrom = null; 
+
+        lastHighlightedFrom = null;
     }
 
     Color GetStickColor()
