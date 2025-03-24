@@ -294,6 +294,9 @@ MonoBehaviour:
   iStickPrefab: {fileID: 1373257871647158785, guid: 359014e3823d9ab4ea8e5541fb839781, type: 3}
   lStickPrefab: {fileID: 3350033972280514743, guid: 7dab2379460419c459e9a01ffeca0a52, type: 3}
   uStickPrefab: {fileID: 8741166110320874875, guid: 86b83696791f8654680ad47646a1d0c6, type: 3}
+  iStickPrefab_rotated90: {fileID: 1373257871647158785, guid: 21da665ee004b6e4b849d7db30881532, type: 3}
+  lStickPrefab_rotated90: {fileID: 0}
+  uStickPrefab_rotated90: {fileID: 0}
   selectionArea: {fileID: 1530665874}
   spawnPositions:
   - {x: 0, y: -3, z: 0}
