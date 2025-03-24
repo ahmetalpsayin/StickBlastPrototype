@@ -11,6 +11,7 @@ public class GridManager : MonoBehaviour
     private Node[,] nodes;
     private Dictionary<Edge, bool> occupiedEdges = new Dictionary<Edge, bool>();
 
+
     [SerializeField]
     public float spacing = 1.5f;
 
@@ -132,6 +133,23 @@ public class GridManager : MonoBehaviour
 
         return false; // Böyle bir edge yoksa geçersizdir
     }
+    public bool CanPlaceStickWithOffsets(Vector2Int baseNode, Vector2Int[] offsets)
+    {
+        for (int i = 0; i < offsets.Length - 1; i++)
+        {
+            Vector2Int from = baseNode + offsets[i];
+            Vector2Int to = baseNode + offsets[i + 1];
 
+            if (!IsValidNode(from) || !IsValidNode(to))
+                return false;
+
+            Edge edge = new Edge(new Node(from), new Node(to));
+
+            if (!occupiedEdges.ContainsKey(edge) || occupiedEdges[edge])
+                return false;
+        }
+
+        return true;
+    }
 
 }

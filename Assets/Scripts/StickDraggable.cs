@@ -19,8 +19,7 @@ public class StickDraggable : MonoBehaviour
     private GameObject currentEdgeHighlight;
     private List<GameObject> currentNodeHighlights = new List<GameObject>();
 
-    private Vector2Int? lastHighlightedFrom = null;
-    private Vector2Int? lastHighlightedTo = null;
+    private Vector2Int? lastHighlightedFrom = null; 
 
     GridManager gridManager;
 
@@ -38,17 +37,17 @@ public class StickDraggable : MonoBehaviour
 
         Vector3 mouseWorldPos = cam.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
+         
 
-        Vector2Int baseNode = gridManager.GetClosestNode(mouseWorldPos);
-        Vector2Int? validTarget = FindValidTargetEdge(baseNode);
+        Vector2Int? validBase = FindValidPlacementBaseNode();
 
-        if (validTarget != null)
+        if (validBase != null)
         {
             // Yeni hedef farklıysa, highlight'ı yenile
-            if (lastHighlightedFrom != baseNode || lastHighlightedTo != validTarget)
+            if (lastHighlightedFrom != validBase)
             {
                 ClearHighlight();
-                ShowHighlight(baseNode, validTarget.Value, GetStickColor());
+                ShowHighlightForOffsets(validBase.Value, GetStickColor());
             }
         }
         else
@@ -56,6 +55,10 @@ public class StickDraggable : MonoBehaviour
             // Highlight varsa temizle
             ClearHighlight();
         }
+
+
+       
+         
     }
 
     void OnMouseDown()
@@ -120,36 +123,47 @@ public class StickDraggable : MonoBehaviour
         }
     }
 
-    void ShowHighlight(Vector2Int from, Vector2Int to, Color stickColor)
+    void ShowHighlightForOffsets(Vector2Int baseNode, Color stickColor)
     {
-        GridManager gridManager = FindObjectOfType<GridManager>();
-        Vector3 worldA = gridManager.GridToWorldPosition(from);
-        Vector3 worldB = gridManager.GridToWorldPosition(to);
-        Vector3 midPoint = (worldA + worldB) / 2f;
-        Vector3 dir = worldB - worldA;
-        float length = dir.magnitude;
+        // Edge highlight
+        for (int i = 0; i < occupiedOffsets.Length - 1; i++)
+        {
+            Vector2Int from = baseNode + occupiedOffsets[i];
+            Vector2Int to = baseNode + occupiedOffsets[i + 1];
 
-        // Highlight Edge
-        currentEdgeHighlight = Instantiate(highlightEdgePrefab, midPoint, Quaternion.identity);
-        currentEdgeHighlight.transform.right = dir.normalized;
-        currentEdgeHighlight.transform.localScale = new Vector3(length, 0.2f, 1f);
-        currentEdgeHighlight.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
+            Vector3 worldA = gridManager.GridToWorldPosition(from);
+            Vector3 worldB = gridManager.GridToWorldPosition(to);
+            Vector3 mid = (worldA + worldB) / 2f;
+            Vector3 dir = worldB - worldA;
+            float length = dir.magnitude;
 
-        // Highlight Nodes
-        Vector3 posA = gridManager.GridToWorldPosition(from);
-        Vector3 posB = gridManager.GridToWorldPosition(to);
+            GameObject edge = Instantiate(highlightEdgePrefab, mid, Quaternion.identity);
 
-        GameObject nodeA = Instantiate(highlightNodePrefab, posA, Quaternion.identity);
-        nodeA.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
-        currentNodeHighlights.Add(nodeA);
+            // Yön ve scale
+            if (Mathf.Abs(from.x - to.x) == 1)
+                edge.transform.localScale = new Vector3(length, 0.2f, 1f);
+            else
+                edge.transform.localScale = new Vector3(0.2f, length, 1f);
 
-        GameObject nodeB = Instantiate(highlightNodePrefab, posB, Quaternion.identity);
-        nodeB.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
-        currentNodeHighlights.Add(nodeB);
+            edge.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
+            currentEdgeHighlight = edge;
+        }
 
-        lastHighlightedFrom = from;
-        lastHighlightedTo = to;
+        // Node highlight
+        foreach (Vector2Int offset in occupiedOffsets)
+        {
+            Vector2Int nodePos = baseNode + offset;
+            Vector3 worldPos = gridManager.GridToWorldPosition(nodePos);
+
+            GameObject node = Instantiate(highlightNodePrefab, worldPos, Quaternion.identity);
+            node.GetComponent<SpriteRenderer>().color = Color.Lerp(stickColor, Color.gray, 0.5f);
+            currentNodeHighlights.Add(node);
+        }
+
+        lastHighlightedFrom = baseNode;
     }
+
+     
 
     void ClearHighlight()
     {
@@ -162,8 +176,7 @@ public class StickDraggable : MonoBehaviour
         }
 
         currentNodeHighlights.Clear();
-        lastHighlightedFrom = null;
-        lastHighlightedTo = null;
+        lastHighlightedFrom = null; 
     }
 
     Color GetStickColor()
@@ -193,6 +206,39 @@ public class StickDraggable : MonoBehaviour
 
         return null;
     }
+
+
+    Vector2Int? FindValidPlacementBaseNode()
+    {
+        Vector3 mouseWorld = cam.ScreenToWorldPoint(Input.mousePosition);
+        Vector2Int nearest = gridManager.GetClosestNode(mouseWorld);
+
+        Vector2Int? best = null;
+        float bestDist = float.MaxValue;
+
+        for (int x = 0; x < gridManager.nodeGridWidth; x++)
+        {
+            for (int y = 0; y < gridManager.nodeGridHeight; y++)
+            {
+                Vector2Int baseNode = new Vector2Int(x, y);
+                if (gridManager.CanPlaceStickWithOffsets(baseNode, occupiedOffsets))
+                {
+                    Vector3 worldPos = gridManager.GridToWorldPosition(baseNode);
+                    float dist = Vector2.Distance(worldPos, mouseWorld);
+
+                    if (dist < bestDist)
+                    {
+                        bestDist = dist;
+                        best = baseNode;
+                    }
+                }
+            }
+        }
+
+        return best;
+    }
+
+
 
 }
 
