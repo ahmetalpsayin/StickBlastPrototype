@@ -23,6 +23,9 @@ public class StickDraggable : MonoBehaviour
 
     GridManager gridManager;
 
+    private Vector3 originalPosition; 
+    private bool placed = false;
+
     void Start()
     {
 
@@ -63,6 +66,8 @@ public class StickDraggable : MonoBehaviour
 
     void OnMouseDown()
     {
+        originalPosition = transform.position; 
+        placed = false;
         isDragging = true;
     }
 
@@ -80,8 +85,20 @@ public class StickDraggable : MonoBehaviour
         isDragging = false;
          
         Vector2Int baseNode = gridManager.GetClosestNode(transform.position);
+          
+        // Yerleştirme girişimi
+        bool success = gridManager.TryPlaceStickWithOffsets(baseNode, occupiedOffsets); // senin sistemine uygun fonksiyon
 
-        bool placed = gridManager.TryPlaceStickWithOffsets(baseNode, occupiedOffsets);
+        if (success)
+        {
+            placed = true;
+            Destroy(gameObject); // Çubuk artık sahneden kalkabilir
+        }
+        else
+        {
+            // ❌ Yerleştirme başarısız → geri dön
+            StartCoroutine(MoveBackToOriginal());
+        }
 
         if (placed)
         {
@@ -238,7 +255,21 @@ public class StickDraggable : MonoBehaviour
         return best;
     }
 
+    IEnumerator MoveBackToOriginal()
+    {
+        float duration = 0.2f;
+        float time = 0f;
+        Vector3 start = transform.position;
 
+        while (time < duration)
+        {
+            transform.position = Vector3.Lerp(start, originalPosition, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = originalPosition;
+    }
 
 }
 
