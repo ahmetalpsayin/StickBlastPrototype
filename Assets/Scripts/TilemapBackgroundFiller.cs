@@ -20,11 +20,18 @@ public class TilemapBackgroundFiller : MonoBehaviour
         {
             Debug.LogWarning("TilemapFiller: Missing references.");
             return;
-        }
+        } 
 
-        tilemap.transform.localScale = Vector3.one * gridManager.spacing; // spacing ile hizala
+        // 🔧 1. Tilemap'i spacing'e göre ölçekle
+        tilemap.transform.localScale = Vector3.one * gridManager.spacing;// spacing ile hizala
         tilemap.transform.localPosition = Vector3.zero;
 
+        // ✅ 2. Tilemap'i node'ların merkezine kaydır
+        tilemap.transform.localPosition = Vector3.zero;
+        //tilemap.transform.localPosition = new Vector3(gridManager.spacing / 2f, gridManager.spacing / 2f, 0f);
+        //tilemap.transform.localPosition = new Vector3( 0.5f * gridManager.spacing, 0.5f * gridManager.spacing, 0f );
+
+        // 🔨 3. Ardından tile'ları bas
         FillTilemap();
     }
 
