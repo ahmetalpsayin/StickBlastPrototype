@@ -15,14 +15,28 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     public float spacing = 1.5f;
 
+    private GridCell[,] cellGrid;
+
     void Start()
     {
         InitializeNodesAndEdges();
-         
+
     }
 
     private void InitializeNodesAndEdges()
     {
+
+        // Hücreleri oluştur (node sayısından 1 eksik çünkü aradaki alanlar)
+        cellGrid = new GridCell[nodeGridWidth - 1, nodeGridHeight - 1];
+
+        for (int x = 0; x < nodeGridWidth - 1; x++)
+        {
+            for (int y = 0; y < nodeGridHeight - 1; y++)
+            {
+                cellGrid[x, y] = new GridCell(new Vector2Int(x, y));
+            }
+        }
+
         nodes = new Node[nodeGridWidth, nodeGridHeight];
 
         for (int x = 0; x < nodeGridWidth; x++)
@@ -107,6 +121,10 @@ public class GridManager : MonoBehaviour
             Debug.Log($" Filled edge between {e.nodeA.position} and {e.nodeB.position}");
         }
 
+
+        //  Tüm kenarları yerleştirdikten sonra boyalı hücre kontrolü
+        CheckAndPaintEnclosedCells();
+
         return true;
     }
 
@@ -150,6 +168,50 @@ public class GridManager : MonoBehaviour
         }
 
         return true;
+    }
+
+
+    private bool IsCellEnclosed(int x, int y)
+    {
+        Node bl = nodes[x, y];
+        Node br = nodes[x + 1, y];
+        Node tr = nodes[x + 1, y + 1];
+        Node tl = nodes[x, y + 1];
+
+        Edge bottom = new Edge(bl, br);
+        Edge right = new Edge(br, tr);
+        Edge top = new Edge(tl, tr);
+        Edge left = new Edge(bl, tl);
+
+        return
+            occupiedEdges.ContainsKey(bottom) && occupiedEdges[bottom] &&
+            occupiedEdges.ContainsKey(right) && occupiedEdges[right] &&
+            occupiedEdges.ContainsKey(top) && occupiedEdges[top] &&
+            occupiedEdges.ContainsKey(left) && occupiedEdges[left];
+    }
+
+    public void CheckAndPaintEnclosedCells()
+    {
+        for (int x = 0; x < nodeGridWidth - 1; x++)
+        {
+            for (int y = 0; y < nodeGridHeight - 1; y++)
+            {
+                GridCell cell = cellGrid[x, y];
+
+                if (!cell.isPainted && IsCellEnclosed(x, y))
+                {
+                    cell.isPainted = true;
+                    Debug.Log($"🟩 Painted cell at ({x},{y})");
+
+                    // Opsiyonel: sahneye görsel boya efekti ekle
+                    Vector3 worldPos = GridToWorldPosition(new Vector2Int(x, y)) + new Vector3(spacing / 2f, spacing / 2f, 0);
+                    GameObject fill = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    fill.transform.position = worldPos;
+                    fill.transform.localScale = Vector3.one * spacing * 0.9f;
+                    fill.GetComponent<Renderer>().material.color = Color.cyan;
+                }
+            }
+        }
     }
 
 }
