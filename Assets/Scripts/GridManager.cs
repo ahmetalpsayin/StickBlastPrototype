@@ -123,7 +123,8 @@ public class GridManager : MonoBehaviour
 
 
         //  Tüm kenarları yerleştirdikten sonra boyalı hücre kontrolü
-        CheckAndPaintEnclosedCells();
+        CheckAndPaintEnclosedCells();     // 🟩 önce boyalı alanları kontrol et
+        CheckAndClearCompletedLines();    // 💥 sonra satır/sütun patlat
 
         return true;
     }
@@ -214,4 +215,86 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void CheckAndClearCompletedLines()
+    {
+        int width = cellGrid.GetLength(0);
+        int height = cellGrid.GetLength(1);
+
+        // ✅ Satırlar (y ekseni boyunca)
+        for (int y = 0; y < height; y++)
+        {
+            bool rowComplete = true;
+            for (int x = 0; x < width; x++)
+            {
+                if (!cellGrid[x, y].isPainted)
+                {
+                    rowComplete = false;
+                    break;
+                }
+            }
+
+            if (rowComplete)
+            {
+                Debug.Log($"💥 Row {y} is complete!");
+                ClearRow(y);
+            }
+        }
+
+        // ✅ Sütunlar (x ekseni boyunca)
+        for (int x = 0; x < width; x++)
+        {
+            bool columnComplete = true;
+            for (int y = 0; y < height; y++)
+            {
+                if (!cellGrid[x, y].isPainted)
+                {
+                    columnComplete = false;
+                    break;
+                }
+            }
+
+            if (columnComplete)
+            {
+                Debug.Log($"💥 Column {x} is complete!");
+                ClearColumn(x);
+            }
+        }
+    }
+
+    private void ClearRow(int y)
+    {
+        int width = cellGrid.GetLength(0);
+        for (int x = 0; x < width; x++)
+        {
+            cellGrid[x, y].isPainted = false;
+
+            // 💡 Sahnedeki renkli kareleri de bul ve yok et (quad veya tile)
+            RemoveVisualAtCell(x, y);
+        }
+    }
+
+    private void ClearColumn(int x)
+    {
+        int height = cellGrid.GetLength(1);
+        for (int y = 0; y < height; y++)
+        {
+            cellGrid[x, y].isPainted = false;
+            RemoveVisualAtCell(x, y);
+        }
+    }
+
+    private void RemoveVisualAtCell(int x, int y)
+    {
+        Vector3 worldPos = GridToWorldPosition(new Vector2Int(x, y)) + new Vector3(spacing / 2f, spacing / 2f, 0);
+
+        // Çevresinde küçük bir alanda quad varsa yok et
+        Collider[] hits = Physics.OverlapSphere(worldPos, 0.1f);
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.name.Contains("Quad") || hit.gameObject.name.Contains("Paint"))
+            {
+                Destroy(hit.gameObject);
+            }
+        }
+    }
 }
