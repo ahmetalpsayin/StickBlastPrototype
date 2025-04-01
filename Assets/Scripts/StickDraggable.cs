@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class StickDraggable : MonoBehaviour
 {
-    public Vector2Int[] occupiedOffsets;
-
     private Vector3 startPosition;
     private Camera cam;
     private bool isDragging = false;
@@ -23,8 +21,11 @@ public class StickDraggable : MonoBehaviour
 
     public GridManager gridManager;
 
-    private Vector3 originalPosition; 
+    private Vector3 originalPosition;
     private bool placed = false;
+
+    public StickData stickData;
+    public int currentRotation = 0;
 
     void Start()
     {
@@ -83,11 +84,13 @@ public class StickDraggable : MonoBehaviour
     void OnMouseUp()
     {
         isDragging = false;
-         
+
         Vector2Int baseNode = gridManager.GetClosestNode(transform.position);
-          
+
+        Vector2Int[] offsets = GetCurrentOffsets();
+
         // Yerleştirme girişimi
-        bool success = gridManager.TryPlaceStickWithOffsets(baseNode, occupiedOffsets); // senin sistemine uygun fonksiyon
+        bool success = gridManager.TryPlaceStickWithOffsets(baseNode, offsets); // senin sistemine uygun fonksiyon
 
         if (success)
         {
@@ -103,18 +106,20 @@ public class StickDraggable : MonoBehaviour
 
         if (placed)
         {
+
+
             // 1. Edge ve Node'lara beyaz görsel yerleştir
-            for (int i = 0; i < occupiedOffsets.Length; i++)
+            for (int i = 0; i < offsets.Length; i++)
             {
-                Vector2Int nodePos = baseNode + occupiedOffsets[i];
+                Vector2Int nodePos = baseNode + offsets[i];
                 Vector3 worldPos = gridManager.GridToWorldPosition(nodePos);
                 Instantiate(whiteNodePrefab, worldPos, Quaternion.identity);
             }
 
-            for (int i = 0; i < occupiedOffsets.Length - 1; i++)
+            for (int i = 0; i < offsets.Length - 1; i++)
             {
-                Vector2Int from = baseNode + occupiedOffsets[i];
-                Vector2Int to = baseNode + occupiedOffsets[i + 1];
+                Vector2Int from = baseNode + offsets[i];
+                Vector2Int to = baseNode + offsets[i + 1];
 
                 Vector3 posA = gridManager.GridToWorldPosition(from);
                 Vector3 posB = gridManager.GridToWorldPosition(to);
@@ -145,11 +150,13 @@ public class StickDraggable : MonoBehaviour
     {
         ClearHighlight(); // Önceki highlight'ları temizle
 
+        Vector2Int[] offsets = GetCurrentOffsets();
+
         // 🔷 Edge highlight
-        for (int i = 0; i < occupiedOffsets.Length - 1; i++)
+        for (int i = 0; i < offsets.Length - 1; i++)
         {
-            Vector2Int from = baseNode + occupiedOffsets[i];
-            Vector2Int to = baseNode + occupiedOffsets[i + 1];
+            Vector2Int from = baseNode + offsets[i];
+            Vector2Int to = baseNode + offsets[i + 1];
 
             Vector3 worldA = gridManager.GridToWorldPosition(from);
             Vector3 worldB = gridManager.GridToWorldPosition(to);
@@ -169,7 +176,7 @@ public class StickDraggable : MonoBehaviour
         }
 
         // 🔶 Node highlight
-        foreach (Vector2Int offset in occupiedOffsets)
+        foreach (Vector2Int offset in offsets)
         {
             Vector2Int nodePos = baseNode + offset;
             Vector3 worldPos = gridManager.GridToWorldPosition(nodePos);
@@ -234,12 +241,14 @@ public class StickDraggable : MonoBehaviour
         Vector2Int? best = null;
         float bestDist = float.MaxValue;
 
+        Vector2Int[] offsets = GetCurrentOffsets();
+
         for (int x = 0; x < gridManager.nodeGridWidth; x++)
         {
             for (int y = 0; y < gridManager.nodeGridHeight; y++)
             {
                 Vector2Int baseNode = new Vector2Int(x, y);
-                if (gridManager.CanPlaceStickWithOffsets(baseNode, occupiedOffsets))
+                if (gridManager.CanPlaceStickWithOffsets(baseNode, offsets))
                 {
                     Vector3 worldPos = gridManager.GridToWorldPosition(baseNode);
                     float dist = Vector2.Distance(worldPos, mouseWorld);
@@ -270,6 +279,19 @@ public class StickDraggable : MonoBehaviour
         }
 
         transform.position = originalPosition;
+    }
+
+
+    public Vector2Int[] GetCurrentOffsets()
+    {
+        return stickData != null ? stickData.GetRotatedOffsets(currentRotation) : new Vector2Int[0];
+    }
+
+
+    public void Rotate()
+    {
+        currentRotation = (currentRotation + 1) % 4;
+        transform.rotation = Quaternion.Euler(0, 0, -90 * currentRotation);
     }
 
 }

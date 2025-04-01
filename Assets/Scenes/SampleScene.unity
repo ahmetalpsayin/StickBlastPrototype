@@ -339,12 +339,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c5180a7f8420f0478e34a5d5bd4930a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iStickPrefab: {fileID: 1373257871647158785, guid: 359014e3823d9ab4ea8e5541fb839781, type: 3}
-  lStickPrefab: {fileID: 3350033972280514743, guid: 7dab2379460419c459e9a01ffeca0a52, type: 3}
-  uStickPrefab: {fileID: 8741166110320874875, guid: 86b83696791f8654680ad47646a1d0c6, type: 3}
-  iStickPrefab_rotated180: {fileID: 1373257871647158785, guid: 21da665ee004b6e4b849d7db30881532, type: 3}
-  lStickPrefab_rotated180: {fileID: 3350033972280514743, guid: 5d31af9edf5521e44bc04a31725eeb54, type: 3}
-  uStickPrefab_rotated180: {fileID: 8741166110320874875, guid: 7474735cf95819f439b79a09815a073f, type: 3}
+  availableSticks:
+  - {fileID: 11400000, guid: 2f57363bac6ca2148a99f7ccc6bca8e0, type: 2}
+  - {fileID: 11400000, guid: 3425f50bdc385b54fba932ab739770cd, type: 2}
+  - {fileID: 11400000, guid: 63001f35b88b438428805c1fdb5bbb54, type: 2}
+  - {fileID: 11400000, guid: cb76b0a6890b1ad49bebb51ba2062c8e, type: 2}
+  - {fileID: 11400000, guid: f74cf9fde61b32d4685308e9f9789a8a, type: 2}
+  - {fileID: 11400000, guid: 89c55fbf14779ae4489c29fc4221e1c4, type: 2}
   selectionArea: {fileID: 1530665874}
   spawnPositions:
   - {x: 0, y: -3, z: 0}

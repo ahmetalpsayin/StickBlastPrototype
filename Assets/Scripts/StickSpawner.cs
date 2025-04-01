@@ -1,9 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine; 
 
 public class StickSpawner : MonoBehaviour
 {
+
+    /*
     public GameObject iStickPrefab;
     public GameObject lStickPrefab;
     public GameObject uStickPrefab;
@@ -11,8 +13,13 @@ public class StickSpawner : MonoBehaviour
     public GameObject lStickPrefab_rotated180;
     public GameObject uStickPrefab_rotated180;
 
+    */
+
+    [Header("Stick Definitions")]
+    public List<StickData> availableSticks;  // ✅ Artık ScriptableObject üzerinden
+
     public Transform selectionArea;  // SelectionArea GameObject
-    public Vector3[] spawnPositions; // Selection alan�nda 3 pozisyon
+    public Vector3[] spawnPositions; // Selection alanında 3 pozisyon
 
     private List<GameObject> currentSticks = new List<GameObject>();
 
@@ -25,11 +32,18 @@ public class StickSpawner : MonoBehaviour
     {
         ClearSelectionArea();
 
-        GameObject[] pool = new GameObject[] { iStickPrefab, lStickPrefab, uStickPrefab , iStickPrefab_rotated180, lStickPrefab_rotated180, uStickPrefab_rotated180 };
-
         for (int i = 0; i < 3; i++)
         {
-            GameObject newStick = Instantiate(pool[Random.Range(0, pool.Length)], spawnPositions[i], Quaternion.identity, selectionArea);
+            StickData selectedData = availableSticks[Random.Range(0, availableSticks.Count)];
+            GameObject newStick = Instantiate(selectedData.stickPrefab, spawnPositions[i], Quaternion.identity, selectionArea);
+
+            // ScriptableObject referansını draggable objeye ver
+            StickDraggable stickScript = newStick.GetComponent<StickDraggable>();
+            if (stickScript != null)
+            {
+                stickScript.stickData = selectedData;
+            }
+
             currentSticks.Add(newStick);
         }
     }
@@ -48,7 +62,7 @@ public class StickSpawner : MonoBehaviour
         currentSticks.Remove(placedStick);
         if (currentSticks.Count == 0)
         {
-            SpawnNewSticks(); // T�m stick�ler yerle�tirildiyse, 3 yeni tane getir
+            SpawnNewSticks(); // Tüm stick’ler yerleştirildiyse, 3 yeni tane getir
         }
     }
 }

@@ -52,7 +52,7 @@ public class StickOffsetGenerator : Editor
             return a.y.CompareTo(b.y);
         });
 
-        stick.occupiedOffsets = offsets.ToArray();
+        stick.stickData.occupiedOffsets = offsets.ToArray();
 
         Debug.Log($"✅ {offsets.Count} occupiedOffsets generated for '{stick.name}'");
         EditorUtility.SetDirty(stick);

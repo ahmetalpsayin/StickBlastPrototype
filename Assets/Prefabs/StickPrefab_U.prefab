@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 3317980375006891972}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0.01000005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -110,7 +110,7 @@ Transform:
   m_GameObject: {fileID: 7383647321577805749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.22, y: -1.11, z: 0}
+  m_LocalPosition: {x: 1.22, y: -1.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -194,7 +194,7 @@ Transform:
   m_GameObject: {fileID: 8313438209123291949}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.42, y: 0.3, z: 0}
+  m_LocalPosition: {x: 2.42, y: 0.01000005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -354,3 +354,4 @@ MonoBehaviour:
   whiteEdgePrefab: {fileID: 522375501933395960, guid: f62c7bb9a8deb5845b2247e8cd89fb80, type: 3}
   highlightNodePrefab: {fileID: 4261726030781492566, guid: b96c083734cf16a41904f9b2284715bd, type: 3}
   highlightEdgePrefab: {fileID: 4018837201856163877, guid: a2ef5b0ac896f224690165c1782f2411, type: 3}
+  gridManager: {fileID: 0}
