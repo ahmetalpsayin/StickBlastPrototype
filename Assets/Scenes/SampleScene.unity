@@ -170,6 +170,54 @@ MonoBehaviour:
   gridHeight: 10
   extraVerticalSpace: 4
   minOrthoSize: 6
+--- !u!1 &374936268
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 374936270}
+  - component: {fileID: 374936269}
+  m_Layer: 0
+  m_Name: TilemapFiller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &374936269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374936268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78858199ed2ce1245b85012b402daad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 1251262436}
+  tile: {fileID: 11400000, guid: 5508857f22db8914a99154b2eb279202, type: 2}
+  gridManager: {fileID: 1398649819}
+  clearBeforeFill: 1
+--- !u!4 &374936270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 374936268}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,7 +424,6 @@ GameObject:
   - component: {fileID: 1251262434}
   - component: {fileID: 1251262436}
   - component: {fileID: 1251262435}
-  - component: {fileID: 1251262437}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -458,15 +505,45 @@ Tilemap:
   m_Enabled: 1
   m_Tiles: {}
   m_AnimatedTiles: {}
-  m_TileAssetArray: []
-  m_TileSpriteArray: []
-  m_TileMatrixArray: []
-  m_TileColorArray: []
+  m_TileAssetArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileSpriteArray:
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  m_TileMatrixArray:
+  - m_RefCount: 0
+    m_Data:
+      e00: -456136.75
+      e01: 0
+      e02: 2.0328811e-19
+      e03: 2.0328811e-19
+      e10: 2.66e-43
+      e11: 0
+      e12: 9.25e-43
+      e13: 9.25e-43
+      e20: -1.6476841e+37
+      e21: -0.0000000055136127
+      e22: -0.0000000015738708
+      e23: 1.6945785e+29
+      e30: 4.5904e-41
+      e31: 9.28e-43
+      e32: 9.25e-43
+      e33: 9.28e-43
+  m_TileColorArray:
+  - m_RefCount: 0
+    m_Data: {r: 3.7905e-41, g: 3.7905e-41, b: 3.7905e-41, a: 3.7905e-41}
+  - m_RefCount: 0
+    m_Data: {r: 3.7838e-41, g: 3.7838e-41, b: 3.7838e-41, a: 3.7838e-41}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.6792453, g: 0.6696333, b: 0.6696333, a: 1}
-  m_Origin: {x: 0, y: 0, z: 0}
-  m_Size: {x: 0, y: 0, z: 1}
+  m_Color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+  m_Origin: {x: -10, y: -1, z: 0}
+  m_Size: {x: 12, y: 8, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -486,21 +563,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &1251262437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1251262433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78858199ed2ce1245b85012b402daad3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemap: {fileID: 1251262436}
-  tile: {fileID: 11400000, guid: 5508857f22db8914a99154b2eb279202, type: 2}
-  gridManager: {fileID: 1398649819}
 --- !u!1 &1398649818
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,7 +626,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!156049354 &1420615207
 Grid:
   m_ObjectHideFlags: 0
@@ -720,3 +782,4 @@ SceneRoots:
   - {fileID: 622276950}
   - {fileID: 1126677988}
   - {fileID: 1420615208}
+  - {fileID: 374936270}

@@ -21,7 +21,7 @@ public class StickDraggable : MonoBehaviour
 
     private Vector2Int? lastHighlightedFrom = null; 
 
-    GridManager gridManager;
+    public GridManager gridManager;
 
     private Vector3 originalPosition; 
     private bool placed = false;
@@ -98,6 +98,7 @@ public class StickDraggable : MonoBehaviour
         {
             // ❌ Yerleştirme başarısız → geri dön
             StartCoroutine(MoveBackToOriginal());
+            ClearHighlight(); //  HIGHLIGHT'I SAHNEDEN TEMİZLE
         }
 
         if (placed)
