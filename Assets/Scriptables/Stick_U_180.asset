@@ -19,4 +19,4 @@ MonoBehaviour:
   - {x: 0, y: 1}
   - {x: 1, y: 1}
   - {x: 1, y: 0}
-  stickPrefab: {fileID: 8741166110320874875, guid: 86b83696791f8654680ad47646a1d0c6, type: 3}
+  stickPrefab: {fileID: 8741166110320874875, guid: 7474735cf95819f439b79a09815a073f, type: 3}
