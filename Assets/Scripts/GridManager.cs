@@ -12,6 +12,10 @@ public class GridManager : MonoBehaviour
     private Dictionary<Edge, bool> occupiedEdges = new Dictionary<Edge, bool>();
 
 
+    [Header("Visual Prefabs")]
+    public GameObject nodeVisualPrefab;
+    public GameObject edgeVisualPrefab;
+
     [SerializeField]
     public float spacing = 1.5f;
 
@@ -208,8 +212,11 @@ public class GridManager : MonoBehaviour
                     Vector3 worldPos = GridToWorldPosition(new Vector2Int(x, y)) + new Vector3(spacing / 2f, spacing / 2f, 0);
                     GameObject fill = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     fill.transform.position = worldPos;
-                    fill.transform.localScale = Vector3.one * spacing * 0.9f;
-                    fill.GetComponent<Renderer>().material.color = Color.cyan;
+                    fill.transform.localScale = Vector3.one * spacing * 0.9f;  
+                    fill.name = $"Paint_{x}_{y}";  
+                    var renderer = fill.GetComponent<Renderer>();
+                    renderer.material = new Material(Shader.Find("Sprites/Default")); // 🔄 Unlit shader
+                    renderer.material.color = Color.cyan;
                 }
             }
         }
@@ -270,6 +277,9 @@ public class GridManager : MonoBehaviour
 
             // 💡 Sahnedeki renkli kareleri de bul ve yok et (quad veya tile)
             RemoveVisualAtCell(x, y);
+
+            // 🔄 O hücreyi çevreleyen kenarları boşalt
+            ClearCellEdges(x, y);
         }
     }
 
@@ -280,21 +290,77 @@ public class GridManager : MonoBehaviour
         {
             cellGrid[x, y].isPainted = false;
             RemoveVisualAtCell(x, y);
+
+            // 🔄 O hücreyi çevreleyen kenarları boşalt
+            ClearCellEdges(x, y);
         }
     }
 
     private void RemoveVisualAtCell(int x, int y)
     {
         Vector3 worldPos = GridToWorldPosition(new Vector2Int(x, y)) + new Vector3(spacing / 2f, spacing / 2f, 0);
-
+        /*
         // Çevresinde küçük bir alanda quad varsa yok et
         Collider[] hits = Physics.OverlapSphere(worldPos, 0.1f);
         foreach (var hit in hits)
         {
             if (hit.gameObject.name.Contains("Quad") || hit.gameObject.name.Contains("Paint"))
             {
-                Destroy(hit.gameObject);
+                StartCoroutine(FadeAndDestroy(hit.gameObject, 0.4f));
             }
         }
+        */
+
+        string name = $"Paint_{x}_{y}";
+        GameObject quad = GameObject.Find(name);
+
+        if (quad != null)
+        {
+            StartCoroutine(FadeAndDestroy(quad, 0.4f));
+        }
+        else
+        {
+            Debug.LogWarning($"❌ Quad not found for cell {x},{y}");
+        }
+    }
+
+    IEnumerator FadeAndDestroy(GameObject obj, float duration = 0.5f)
+    {
+        if (obj == null) yield break;
+
+        Renderer rend = obj.GetComponent<Renderer>();
+        if (rend == null) { Destroy(obj); yield break; }
+
+        Color startColor = rend.material.color;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            rend.material.color = Color.Lerp(startColor, Color.clear, t);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(obj);
+    }
+
+    private void ClearCellEdges(int x, int y)
+    {
+        Node bl = nodes[x, y];
+        Node br = nodes[x + 1, y];
+        Node tr = nodes[x + 1, y + 1];
+        Node tl = nodes[x, y + 1];
+
+        Edge bottom = new Edge(bl, br);
+        Edge right = new Edge(br, tr);
+        Edge top = new Edge(tl, tr);
+        Edge left = new Edge(bl, tl);
+
+        // Bu kenarları yeniden kullanılabilir yap
+        if (occupiedEdges.ContainsKey(bottom)) occupiedEdges[bottom] = false;
+        if (occupiedEdges.ContainsKey(right)) occupiedEdges[right] = false;
+        if (occupiedEdges.ContainsKey(top)) occupiedEdges[top] = false;
+        if (occupiedEdges.ContainsKey(left)) occupiedEdges[left] = false;
     }
 }
