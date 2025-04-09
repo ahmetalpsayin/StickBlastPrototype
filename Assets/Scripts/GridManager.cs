@@ -352,15 +352,63 @@ public class GridManager : MonoBehaviour
         Node tr = nodes[x + 1, y + 1];
         Node tl = nodes[x, y + 1];
 
-        Edge bottom = new Edge(bl, br);
-        Edge right = new Edge(br, tr);
-        Edge top = new Edge(tl, tr);
-        Edge left = new Edge(bl, tl);
+        Edge[] edges = {
+        new Edge(bl, br),
+        new Edge(br, tr),
+        new Edge(tl, tr),
+        new Edge(bl, tl)
+    };
 
-        // Bu kenarları yeniden kullanılabilir yap
-        if (occupiedEdges.ContainsKey(bottom)) occupiedEdges[bottom] = false;
-        if (occupiedEdges.ContainsKey(right)) occupiedEdges[right] = false;
-        if (occupiedEdges.ContainsKey(top)) occupiedEdges[top] = false;
-        if (occupiedEdges.ContainsKey(left)) occupiedEdges[left] = false;
+        foreach (Edge edge in edges)
+        {
+            if (occupiedEdges.ContainsKey(edge))
+            {
+                occupiedEdges[edge] = false;
+
+                // ✅ Görsel edge tekrar oluştur
+                Vector3 worldA = GridToWorldPosition(edge.nodeA.position);
+                Vector3 worldB = GridToWorldPosition(edge.nodeB.position);
+                Vector3 mid = (worldA + worldB) / 2f;
+                Vector3 dir = worldB - worldA;
+
+                GameObject edgeVisual = Instantiate(edgeVisualPrefab, mid, Quaternion.identity);
+                edgeVisual.transform.right = dir.normalized;
+                edgeVisual.transform.localScale = new Vector3(dir.magnitude, 0.15f, 1f);
+            }
+        }
+
+        // ✅ Köşe node'ları da yeşil hale getir
+        Vector2Int[] nodePositions = { bl.position, br.position, tr.position, tl.position };
+        foreach (Vector2Int pos in nodePositions)
+        {
+            Vector3 worldPos = GridToWorldPosition(pos);
+            Instantiate(nodeVisualPrefab, worldPos, Quaternion.identity);
+        }
+    }
+
+    private void RemoveNodeVisualAt(Vector3 worldPos)
+    {
+        Collider[] hits = Physics.OverlapSphere(worldPos, 0.1f); // Küçük bir yarıçapla ara
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.name.Contains("NodeVisual"))
+            {
+                Destroy(hit.gameObject);
+            }
+        }
+    }
+
+    private void RemoveEdgeVisualBetween(Vector3 from, Vector3 to)
+    {
+        Vector3 mid = (from + to) / 2f;
+        Collider[] hits = Physics.OverlapSphere(mid, 0.1f); // Kenarın ortasına bak
+
+        foreach (var hit in hits)
+        {
+            if (hit.gameObject.name.Contains("EdgeVisual"))
+            {
+                Destroy(hit.gameObject);
+            }
+        }
     }
 }
