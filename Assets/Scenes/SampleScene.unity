@@ -170,6 +170,8 @@ MonoBehaviour:
   gridHeight: 10
   extraVerticalSpace: 4
   minOrthoSize: 6
+  levelData: {fileID: 0}
+  gridManager: {fileID: 1398649819}
 --- !u!1 &374936268
 GameObject:
   m_ObjectHideFlags: 0

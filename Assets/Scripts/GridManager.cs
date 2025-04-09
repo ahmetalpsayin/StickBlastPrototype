@@ -382,6 +382,7 @@ public class GridManager : MonoBehaviour
         foreach (Vector2Int pos in nodePositions)
         {
             Vector3 worldPos = GridToWorldPosition(pos);
+            RemoveNodeVisualAt(worldPos);
             Instantiate(nodeVisualPrefab, worldPos, Quaternion.identity);
         }
     }
