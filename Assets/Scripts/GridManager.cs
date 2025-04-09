@@ -16,6 +16,12 @@ public class GridManager : MonoBehaviour
     public GameObject nodeVisualPrefab;
     public GameObject edgeVisualPrefab;
 
+    public List<GameObject> nodeVisuals;
+    public List<GameObject> edgeVisuals;
+
+    public GridVisualizer gridVisualizer;
+    private Dictionary<Edge, GameObject> edgeVisualsMap = new Dictionary<Edge, GameObject>();
+
     [SerializeField]
     public float spacing = 1.5f;
 
@@ -23,7 +29,10 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
+        nodeVisuals = new List<GameObject>();
+        edgeVisuals = new List<GameObject>(); 
         InitializeNodesAndEdges();
+
 
     }
 
@@ -111,6 +120,19 @@ public class GridManager : MonoBehaviour
             if (occupiedEdges.ContainsKey(edge) && !occupiedEdges[edge])
             {
                 edgesToOccupy.Add(edge);
+
+                // ✅ Görsel oluştur ve kaydet
+                Vector3 worldA = GridToWorldPosition(from);
+                Vector3 worldB = GridToWorldPosition(to);
+                Vector3 mid = (worldA + worldB) / 2f;
+                float length = (worldB - worldA).magnitude;
+
+                GameObject edgeObj = Instantiate(edgeVisualPrefab, mid, Quaternion.identity);
+                edgeObj.transform.right = (worldB - worldA).normalized;
+                edgeObj.transform.localScale = new Vector3(length, 0.1f, 1f);
+                edgeObj.GetComponent<SpriteRenderer>().color = Color.white;
+
+                edgeVisualsMap[edge] = edgeObj; // kaydet
             }
             else
             {
@@ -281,6 +303,9 @@ public class GridManager : MonoBehaviour
             // 🔄 O hücreyi çevreleyen kenarları boşalt
             ClearCellEdges(x, y);
         }
+
+        // 🔄 Güncelle 
+        RefreshEdgeAndNodeVisuals();
     }
 
     private void ClearColumn(int x)
@@ -294,6 +319,9 @@ public class GridManager : MonoBehaviour
             // 🔄 O hücreyi çevreleyen kenarları boşalt
             ClearCellEdges(x, y);
         }
+
+        // 🔄 Güncelle 
+        RefreshEdgeAndNodeVisuals();
     }
 
     private void RemoveVisualAtCell(int x, int y)
@@ -358,9 +386,90 @@ public class GridManager : MonoBehaviour
         Edge left = new Edge(bl, tl);
 
         // Bu kenarları yeniden kullanılabilir yap
-        if (occupiedEdges.ContainsKey(bottom)) occupiedEdges[bottom] = false;
-        if (occupiedEdges.ContainsKey(right)) occupiedEdges[right] = false;
-        if (occupiedEdges.ContainsKey(top)) occupiedEdges[top] = false;
-        if (occupiedEdges.ContainsKey(left)) occupiedEdges[left] = false;
+        //if (occupiedEdges.ContainsKey(bottom)) occupiedEdges[bottom] = false;
+        //if (occupiedEdges.ContainsKey(right)) occupiedEdges[right] = false;
+        //if (occupiedEdges.ContainsKey(top)) occupiedEdges[top] = false;
+        //if (occupiedEdges.ContainsKey(left)) occupiedEdges[left] = false;
+
+        ClearEdge(bottom);
+        ClearEdge(right);
+        ClearEdge(top);
+        ClearEdge(left);
     }
+
+    private void ClearEdge(Edge edge)
+    {
+        if (occupiedEdges.ContainsKey(edge))
+        {
+            occupiedEdges[edge] = false;
+
+            // ❌ Varsa görseli sil
+            if (edgeVisualsMap.ContainsKey(edge))
+            {
+                Destroy(edgeVisualsMap[edge]);
+                edgeVisualsMap.Remove(edge);
+            }
+
+            // ✅ Yeşil kenar çiz (tekrar kullanılabilir oldu)
+            Vector3 worldA = GridToWorldPosition(edge.nodeA.position);
+            Vector3 worldB = GridToWorldPosition(edge.nodeB.position);
+            Vector3 mid = (worldA + worldB) / 2f;
+            float length = (worldB - worldA).magnitude;
+
+            GameObject newEdge = Instantiate(edgeVisualPrefab, mid, Quaternion.identity);
+            newEdge.transform.right = (worldB - worldA).normalized;
+            newEdge.transform.localScale = new Vector3(length, 0.1f, 1f);
+            newEdge.GetComponent<SpriteRenderer>().color = Color.green;
+
+            edgeVisualsMap[edge] = newEdge;
+        }
+    }
+
+    public void RefreshEdgeAndNodeVisuals()
+    {
+        // 1. Önce sahnedeki tüm eski objeleri yok et
+        foreach (var vis in GameObject.FindGameObjectsWithTag("EdgeVisual"))
+        {
+            Destroy(vis);
+        }
+
+        foreach (var vis in GameObject.FindGameObjectsWithTag("NodeVisual"))
+        {
+            Destroy(vis);
+        }
+
+        // 2. Yeniden çiz (yeşil ya da beyaz duruma göre)
+        for (int x = 0; x < nodeGridWidth; x++)
+        {
+            for (int y = 0; y < nodeGridHeight; y++)
+            {
+                Vector3 nodePos = GridToWorldPosition(new Vector2Int(x, y));
+                GameObject node = Instantiate(nodeVisualPrefab, nodePos, Quaternion.identity);
+                node.tag = "NodeVisual";
+
+                // Yeşil node
+                node.GetComponent<SpriteRenderer>().color = Color.cyan;
+            }
+        }
+
+        foreach (var kvp in occupiedEdges)
+        {
+            Edge edge = kvp.Key;
+            bool isOccupied = kvp.Value;
+
+            Vector3 posA = GridToWorldPosition(edge.nodeA.position);
+            Vector3 posB = GridToWorldPosition(edge.nodeB.position);
+            Vector3 mid = (posA + posB) / 2f;
+            Vector3 dir = posB - posA;
+            float length = dir.magnitude;
+
+            GameObject edgeGO = Instantiate(edgeVisualPrefab, mid, Quaternion.identity);
+            edgeGO.tag = "EdgeVisual";
+            edgeGO.transform.right = dir.normalized;
+            edgeGO.transform.localScale = new Vector3(length, 0.1f, 1f);
+
+            edgeGO.GetComponent<SpriteRenderer>().color = isOccupied ? Color.white : Color.green;
+        }
+    }
+
 }

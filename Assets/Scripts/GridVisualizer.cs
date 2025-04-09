@@ -18,21 +18,35 @@ public class GridVisualizer : MonoBehaviour
         DrawEdges();
     }
 
-    void DrawNodes()
+    public void DrawNodes()
     {
+        foreach (var node in gridManager.nodeVisuals)
+        {
+            if (Application.isPlaying)
+                Destroy(node);
+            else
+                DestroyImmediate(node);
+        }
+        gridManager.nodeVisuals.Clear();
+
         for (int x = 0; x < gridManager.nodeGridWidth; x++)
         {
             for (int y = 0; y < gridManager.nodeGridHeight; y++)
             {
                 Vector2Int gridPos = new Vector2Int(x, y);
                 Vector3 worldPos = gridManager.GridToWorldPosition(gridPos);
-                Instantiate(nodePrefab, worldPos, Quaternion.identity, transform);
+                GameObject n = Instantiate(nodePrefab, worldPos, Quaternion.identity, transform);
+                gridManager.nodeVisuals.Add(n);
             }
         }
     }
 
-    void DrawEdges()
+    public void DrawEdges()
     {
+        foreach (var edge in gridManager.edgeVisuals)
+            Destroy(edge);
+        gridManager.edgeVisuals.Clear();
+
         for (int x = 0; x < gridManager.nodeGridWidth; x++)
         {
             for (int y = 0; y < gridManager.nodeGridHeight; y++)
@@ -40,40 +54,36 @@ public class GridVisualizer : MonoBehaviour
                 Vector2Int current = new Vector2Int(x, y);
                 Vector3 worldCurrent = gridManager.GridToWorldPosition(current);
 
-                // Yatay edge
                 if (x < gridManager.nodeGridWidth - 1)
                 {
                     Vector2Int right = new Vector2Int(x + 1, y);
                     Vector3 worldRight = gridManager.GridToWorldPosition(right);
-
-                    CreateEdgeBetween(worldCurrent, worldRight);
+                    gridManager.edgeVisuals.Add(CreateEdgeBetween(worldCurrent, worldRight));
                 }
 
-                // Dikey edge
                 if (y < gridManager.nodeGridHeight - 1)
                 {
                     Vector2Int top = new Vector2Int(x, y + 1);
                     Vector3 worldTop = gridManager.GridToWorldPosition(top);
-
-                    CreateEdgeBetween(worldCurrent, worldTop);
+                    gridManager.edgeVisuals.Add(CreateEdgeBetween(worldCurrent, worldTop));
                 }
             }
         }
     }
 
 
-    void CreateEdgeBetween(Vector3 a, Vector3 b)
+    GameObject CreateEdgeBetween(Vector3 a, Vector3 b)
     {
         Vector3 mid = (a + b) / 2f;
         Vector3 dir = b - a;
         float length = dir.magnitude;
 
         GameObject edge = Instantiate(edgePrefab, mid, Quaternion.identity, transform);
-
-        // Uzunluk ve yön ayarla
         edge.transform.right = dir.normalized;
-        float scaleMultiplier = 1f; // Ne kadar büyütmek istersen
-        edge.transform.localScale = new Vector3(length * scaleMultiplier, 0.1f, 1);
+        edge.transform.localScale = new Vector3(length, 0.1f, 1);
+
+        return edge;
     }
+
 }
 

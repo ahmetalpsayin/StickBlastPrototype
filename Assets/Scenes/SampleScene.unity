@@ -595,6 +595,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeGridWidth: 4
   nodeGridHeight: 4
+  nodeVisualPrefab: {fileID: 3601620002602554649, guid: b040bea93bce4e14ab4b641dbccc6495, type: 3}
+  edgeVisualPrefab: {fileID: 522375501933395960, guid: d61b1c5d5cadfd74ea2f578a4e0cfd54, type: 3}
+  nodeVisuals:
+  - {fileID: 3601620002602554649, guid: b040bea93bce4e14ab4b641dbccc6495, type: 3}
+  edgeVisuals:
+  - {fileID: 522375501933395960, guid: d61b1c5d5cadfd74ea2f578a4e0cfd54, type: 3}
+  gridVisualizer: {fileID: 1126677987}
   spacing: 3
 --- !u!4 &1398649820
 Transform:
